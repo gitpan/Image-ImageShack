@@ -1,0 +1,101 @@
+#!/usr/bin/perl
+
+use lib '../lib';
+
+use Getopt::Long;
+use Pod::Usage;
+
+require Image::ImageShack;
+
+$Getopt::Std::STANDARD_HELP_VERSION = 1;
+
+use strict;
+
+my ($login, $bar, $size, $help, $man, $thumb);
+my $sep = "\t";
+
+
+GetOptions(
+		'help|?'   => \$help,
+		'man'      => \$man,
+		'sep|s=s'  => \$sep,
+		'size=s'   => \$size,
+		'login=s'  => \$login,
+		'thumb|0'  => \$thumb,
+		'bar|0'    => \$bar
+) or pod2usage(2);
+
+my $ishack = Image::ImageShack->new('bar'=>$bar, 'login'=>$login);
+
+if($help){
+		pod2usage(1);
+}elsif($man){
+		pod2usage(-exitstatus => 0, -verbose => 2);
+}elsif(@ARGV){
+	for my $image (@ARGV){
+		print $image.$sep.$ishack->host($image, $size);
+		if($thumb){
+			print $sep.($ishack->hosted_thumb);
+		}
+		print "\n";
+	}
+}
+
+__END__
+=head1 NAME
+
+imageshack_submit
+
+=head1 SYNOPSIS
+
+imageshack_submit [options] [urls or files]
+
+        Options:
+                -help   print help message
+                -man    full documentation
+                -login  user_id where to upload images to
+                -bar    boolean to include resolution bar
+                -thumb  boolean to include thumbnail address
+                -size   width size to rescale image to
+                -sep    character(s) to use to separate file and hosted link
+
+
+=head1 OPTIONS
+
+=over 8
+
+=item B<-help>
+
+Prints a brief help message and exists
+
+=item B<-man>
+
+Prints full documentation
+
+=item B<-login>
+
+User_id where to upload images to. Can be replaced by link in the registration email
+
+=item B<-bar>
+
+Boolean indicating whether a black bar with the real image size should be placed in the thumbnails
+
+=item B<-size>
+
+Size in pixels of the width images should be rescaled to
+
+=item B<-thumb>
+
+Boolean indicating whether the thumbnail address should be printed
+
+=item B<-sep>
+
+If 'file' is hosted at link http://imageshack.us/link then it will print file, sep, and link concatenated on a line for each hosted file or url
+
+=back
+
+=head1 DESCRIPTION
+
+Hosts images in files or urls on imageshack.us
+
+=cut

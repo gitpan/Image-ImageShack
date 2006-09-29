@@ -1,0 +1,31 @@
+Image-ImageShack version 0.00_01
+================================
+
+Image::ImageShack intends to make programmatically possible to upload image files to the website imageshack.us.
+
+imageshack.us allows you to upload image files (jpg, jpeg, png, gif, bmp, tif, tiff, swf < 1.5 megabytes) and to optimize and or resize these files while making them available to others via imageshack.us servers (even direct linking).
+
+Interface subject to modification
+
+INSTALLATION
+
+To install this module type the following:
+
+   perl Makefile.PL
+   make
+   make install
+
+DEPENDENCIES
+
+This module requires these other modules and libraries:
+
+	LWP
+
+COPYRIGHT AND LICENCE
+
+Copyright (C) 2006 by Cláudio Valente
+
+This library is free software; you can redistribute it and/or modify it
+under the same terms as Perl itself, either Perl version 5.8.8 or, at
+your option, any later version of Perl 5 you may have available.
+
