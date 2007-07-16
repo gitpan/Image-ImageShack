@@ -66,7 +66,7 @@ imageshack_submit [options] [urls or files]
 
 =item B<-help>
 
-Prints a brief help message and exists
+Prints a brief help message and exits
 
 =item B<-man>
 

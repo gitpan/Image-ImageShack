@@ -1,6 +1,8 @@
+=encoding utf-8
+
 =head1 NAME
 
-Image::ImageShack - Perl extension for uploading images to imageshack.us
+Upload images to be hosted at imageshack.us
 
 =head1 SYNOPSIS
 
@@ -47,7 +49,7 @@ use Carp qw(carp croak);
 use strict;
 use warnings;
 
-our $VERSION = '0.00_01';
+our $VERSION = '0.01';
 $VERSION = eval $VERSION;
 
 our $url   = 'http://imageshack.us';
@@ -69,7 +71,7 @@ Attributes are:
 
 =item agent
 
-LWP::UserAgent object to used make HTTP requests
+L<LWP::UserAgent|LWP::UserAgent> object to used make HTTP requests
 
 =item bar
 
@@ -369,7 +371,7 @@ __END__
 
 =head1 DISCLAIMER
 
-The author declines ANY responsibility for possible infringement of ImageShackÂ® Terms of Service.
+The author declines ANY responsibility for possible infringement of ImageShack® Terms of Service.
 
 This module doesn't use imageshack's XML API but the HTML/web interface instead
 
@@ -390,9 +392,12 @@ No guarantee that this will ever be implemented
 
 =head1 SEE ALSO
 
-LWP::UserAgent
+L<LWP::UserAgent|LWP::UserAgent>
+
 http://imageshack.us
+
 http://reg.imageshack.us/content.php?page=faq
+
 http://reg.imageshack.us/content.php?page=rules
 
 =head1 AUTHOR
