@@ -1,8 +1,8 @@
-=encoding utf-8
+=encoding utf8
 
 =head1 NAME
 
-Upload images to be hosted at imageshack.us
+Image::ImageShack - Upload images to be hosted at imageshack.us without needing any account information.
 
 =head1 SYNOPSIS
 
@@ -17,11 +17,11 @@ Upload images to be hosted at imageshack.us
   my $image_url = 'http://www.domain.com/image.png';
   
   #upload specifying a url
-  my $url1 = $ishack->upload($image_url);	#upload with real size, just optimizes
-  my $url2 = $ishack->upload($image_url, 320);	#resize to 320x240 (for websites and email)
+  my $url1 = $ishack->host($image_url);	#upload with real size, just optimizes
+  my $url2 = $ishack->host($image_url, 320);	#resize to 320x240 (for websites and email)
 
   #upload a file
-  my $url3 = $ishack->upload('image.jpg');	#upload file
+  my $url3 = $ishack->host('image.jpg');	#upload file
 
   #get the thumbnail address
   my $thumb_url = $ishack->thumb_url();
@@ -49,7 +49,7 @@ use Carp qw(carp croak);
 use strict;
 use warnings;
 
-our $VERSION = '0.01';
+our $VERSION = '0.03';
 $VERSION = eval $VERSION;
 
 our $url   = 'http://imageshack.us';
@@ -79,7 +79,7 @@ Boolean indicating whether thumbnails should have a black bar at the bottom with
 
 =item login
 
-Id used to upload the files. If you have registered with imageshack.us, you should have received an email with a link simillar to: http://reg.imageshack.us/setlogin.php?login=SOME_IDENTIFIER
+Id used to upload the files. If you have registered with imageshack.us, you should have received an email with a link similar to: http://reg.imageshack.us/setlogin.php?login=SOME_IDENTIFIER
 
 If you intend to be able to later on use the web interface to erase files, you should pass either that link as the login parameter or only the user_id (SOME_IDENTIFIER).
 
@@ -101,6 +101,7 @@ sub new{
 			'agent'      => $agent,
 			'timeout'    => 60*5,
 			'keep_alive' => 10,
+			'env_proxy'  => 1,
 		);
 		$self->ua($ua);
 	}
@@ -250,7 +251,7 @@ sub host{
 
 	if($rsp->is_success){
 		my $txt = $rsp->content;
-		if($txt =~ /<\s*input\s+[^>]+\s+value\s*=\s*"([^"]+)"[^>]+>\s*Direct\s+link\s+to\s+image/i){
+		if($txt =~ m{<\s*input\s+[^>]+\s+value\s*=\s*"([^"]+)"[^>]+>\s*</\s*td\s*>\s*<\s*td[^>]*>\s*Direct\s+link\s+to\s+image}ism){
 			$self->hosted($1);
 			if($txt =~/thumbnail for/i){
 				my $uri = $self->hosted();
@@ -267,43 +268,6 @@ sub host{
 	}else{
 		#XXX debug
 		croak($rsp->status_line."[".$rsp->as_string."]")
-	}
-}
-
-=item delete($url)
-
-Deletes image identified by url from imageshack.us servers.
-Login must have been specified or the method will croak.
-If $url is undefined the previously hosted url is deleted.
-
-=cut
-
-sub delete{
-	my ($self, $url) = @_;
-
-	$url ||= $self->hosted;
-	if(!defined($url)){
-		croak "No url to delete";
-	}
-	my $login = $self->login;
-	if(!defined($login)){
-		croak "You must login in order to delete hosted images";
-	}
-
-	my $uri = URI->new($url);
-	my $host = $uri->host;
-	my $path = $uri->path;
-
-	my $duri = sprintf('http://%s/delete.php?l=%s&c=%s', $host, $path, $login);
-
-	my $rsp = $self->ua->get($duri, "Cookie: myimages=$login");
-
-	#XXX better error handling
-	#should check page to see whether image was actually deleted
-	if($rsp->is_success){
-		return $self;
-	}else{
-		croak("Error while deleting $uri.\n".$rsp->status_line);
 	}
 }
 
@@ -349,7 +313,7 @@ Returns or sets the user_id.
 
 =item logout
 
-Resets user_id. From now on images will not be associated with any user, meaning they can't be deleated.
+Resets user_id. From now on images won't be associated with any user.
 
 =cut
 
@@ -371,9 +335,9 @@ __END__
 
 =head1 DISCLAIMER
 
-The author declines ANY responsibility for possible infringement of ImageShack� Terms of Service.
+The author declines ANY responsibility for possible infringement of ImageShack® Terms of Service.
 
-This module doesn't use imageshack's XML API but the HTML/web interface instead
+This module doesn't use imageshack's XML API but the HTML/web interface instead.
 
 =head1 TO-DO
 
@@ -383,9 +347,9 @@ No guarantee that this will ever be implemented
 
 =item HTML code for forums, thumbnails, websites, etc (if you really need this, please ask the author)
 
-=item Better error handling in file deletion
+=item File deletin
 
-=item Implement XML API (probably never)
+=item Implement XML API (probably never or on a different)
 
 =back
 
@@ -406,7 +370,7 @@ Cláudio Valente, E<lt>plank@cpan.orgE<gt>
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright (C) 2006 by Cláudio Valente
+Copyright (C) 2008 by Cláudio Valente
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself, either Perl version 5.8.8 or,

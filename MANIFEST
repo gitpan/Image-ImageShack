@@ -4,4 +4,7 @@ MANIFEST
 README
 lib/Image/ImageShack.pm
 eg/imageshack_submit
+t/00.basic.t
+t/01.upload.t
+t/image.png
 META.yml                                 Module meta-data (added by MakeMaker)

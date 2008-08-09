@@ -1,5 +1,17 @@
 Revision history for Perl extension Image::ImageShack.
 
+0.0.3 Sat Aug  9 15:23:00 WEST 2008
+	- Fixed broken HTML parsing
+	  Removed broken delete
+	  Created upload tests
+	  LWP now uses environment proxy variables
+
+0.02 Mon Jul 16 21:59:27 WEST 2007
+	- Improved documentation
+
+0.01 Mon Jul 16 10:58:56 WEST 2007
+	- Released
+
 0.00_01  Fri Sep 22 21:12:10 2006
 	- original version; created by h2xs 1.23 with options
 		-ABX -n Image::ImageShack
