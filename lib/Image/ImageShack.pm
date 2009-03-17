@@ -1,4 +1,4 @@
-=encoding utf8
+# vim: set fileencoding=latin1 :
 
 =head1 NAME
 
@@ -49,7 +49,7 @@ use Carp qw(carp croak);
 use strict;
 use warnings;
 
-our $VERSION = '0.03';
+our $VERSION = '0.04';
 $VERSION = eval $VERSION;
 
 our $url   = 'http://imageshack.us';
@@ -87,6 +87,8 @@ No verification on the validity of the user_id is currently made
 
 =back
 
+=back
+
 =cut
 
 sub new{
@@ -98,10 +100,11 @@ sub new{
 		$self->ua($attrs{'lwp_ua'});
 	}else{
 		my $ua = LWP::UserAgent->new(
-			'agent'      => $agent,
-			'timeout'    => 60*5,
-			'keep_alive' => 10,
-			'env_proxy'  => 1,
+			'agent'                 => $agent,
+			'timeout'               => 60*5,
+			'keep_alive'            => 10,
+			'env_proxy'             => 1,
+			'requests_redirectable' => [qw(GET POST)]
 		);
 		$self->ua($ua);
 	}
@@ -249,9 +252,13 @@ sub host{
 	my $req = HTTP::Request::Common::POST(@params);
 	my $rsp = $self->ua->request($req);
 
-	if($rsp->is_success){
+	if($rsp->is_error){
+		#XXX debug
+		croak($rsp->status_line."[".$rsp->as_string."]")
+	}else{
 		my $txt = $rsp->content;
-		if($txt =~ m{<\s*input\s+[^>]+\s+value\s*=\s*"([^"]+)"[^>]+>\s*</\s*td\s*>\s*<\s*td[^>]*>\s*Direct\s+link\s+to\s+image}ism){
+		# Changed by "Oleg Fiksel" <fleg@lavabit.com>
+		if($txt =~ /Direct.+?href=['"]*([^'"]+)['"]*/ism){
 			$self->hosted($1);
 			if($txt =~/thumbnail for/i){
 				my $uri = $self->hosted();
@@ -265,9 +272,6 @@ sub host{
 		}else{
 			croak("direct link not found in. Maybe an error ocurred during upload. [".$rsp->as_string."]");
 		}
-	}else{
-		#XXX debug
-		croak($rsp->status_line."[".$rsp->as_string."]")
 	}
 }
 
@@ -335,7 +339,7 @@ __END__
 
 =head1 DISCLAIMER
 
-The author declines ANY responsibility for possible infringement of ImageShackÂ® Terms of Service.
+The author declines ANY responsibility for possible infringement of ImageShack® Terms of Service.
 
 This module doesn't use imageshack's XML API but the HTML/web interface instead.
 
@@ -366,11 +370,11 @@ http://reg.imageshack.us/content.php?page=rules
 
 =head1 AUTHOR
 
-ClÃ¡udio Valente, E<lt>plank@cpan.orgE<gt>
+Cláudio Valente, E<lt>plank@cpan.orgE<gt>
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright (C) 2008 by ClÃ¡udio Valente
+Copyright (C) 2009 by Cláudio Valente
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself, either Perl version 5.8.8 or,

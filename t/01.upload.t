@@ -14,7 +14,7 @@ isa_ok( $is, 'Image::ImageShack', 'object is of correct type');
 can_ok($is, 'host');
 ok( my $url = $is->host($file), 'upload file');
 ok( 200==LWP::Simple::getstore($url, $download), 'downloaded uploaded file');
-ok( 0==File::Compare::compare($file, $download), 'downloaded and uploaded file are equal' );
+ok( 0==File::Compare::compare($file, $download), 'downloaded and uploaded files are equal' );
 
 #cleanup
 unlink($download);
